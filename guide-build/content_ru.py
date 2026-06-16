@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 DATA = {
 "kicker": "THE REACH — ПОЛЕВОЙ ГАЙД / ВЫПУСК 2026",
-"cover_lines": ["СТАРЫЙ SEO", "МЁРТВ.", "AI SEARCH", "УЖЕ ЗДЕСЬ."],
+"cover_lines": ["Старый SEO", "мёртв.", "AI Search", "уже здесь."],
 "cover_sub": "SEO, GEO и AEO с ИИ в 2026. Система, чтобы перестать гнаться за позициями и начать быть понятым, цитируемым и рекомендованным в ChatGPT, Perplexity, Gemini и Google AI Overviews.",
 "sections": [
 {

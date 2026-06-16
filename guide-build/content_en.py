@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 DATA = {
 "kicker": "THE REACH — FIELD GUIDE / EDITION 2026",
-"cover_lines": ["SEO IS DEAD.", "AI SEARCH", "IS HERE."],
+"cover_lines": ["SEO is dead.", "AI Search", "is here."],
 "cover_sub": "SEO, GEO and AEO with AI in 2026. The playbook to stop chasing rankings and start getting understood, cited and recommended by ChatGPT, Perplexity, Gemini and Google AI Overviews.",
 "sections": [
 {
