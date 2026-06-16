@@ -85,8 +85,8 @@ class Doc:
         c.drawString(LM, 812, self.gtitle.upper())
         sec = (self.cur_section or "").upper()
         if sec:
-            c.setFillColor(GREEN); c.setFont("Mono-Bold", 6.4)
-            c.drawRightString(PW - RM, 812, sec)
+            sw = stringWidth(sec, "Mono-Bold", 6.4)
+            self._ychip(PW - RM - sw, 812, sec, "Mono-Bold", 6.4)
             c.setFillColor(BLACK)
         c.setLineWidth(0.8); c.setStrokeColor(BLACK)
         c.line(LM, 804, PW - RM, 804)
@@ -111,6 +111,21 @@ class Doc:
     # ----- blocks -----
     def gap(self, h): self.y -= h
 
+    # yellow accent shape (with black keyline so it reads on white)
+    def _ybar(self, x, y, w, h):
+        c = self.c
+        c.setFillColor(YELLOW); c.setStrokeColor(BLACK); c.setLineWidth(0.6)
+        c.rect(x, y, w, h, fill=1, stroke=1)
+
+    # yellow highlight chip with black text (left-aligned), returns chip width
+    def _ychip(self, x, y, text, font, size, padx=3):
+        c = self.c
+        w = stringWidth(text, font, size)
+        c.setFillColor(YELLOW); c.setStrokeColor(BLACK); c.setLineWidth(0.4)
+        c.rect(x - padx, y - 1.6, w + 2 * padx, size * 0.96 + 1.6, fill=1, stroke=0)
+        c.setFillColor(BLACK); c.setFont(font, size); c.drawString(x, y, text)
+        return w + 2 * padx
+
     def rule(self, color=BLACK, w=0.8, pad=10):
         self.ensure(pad * 2)
         self.y -= pad
@@ -122,7 +137,7 @@ class Doc:
         self.ensure(24); self.y -= 14
         x = LM
         for i in range(3):
-            self.c.setFillColor(GREEN); self.c.rect(x, self.y, 7, 7, fill=1, stroke=0)
+            self._ybar(x, self.y, 7, 7)
             x += 12
         self.y -= 10
 
@@ -150,14 +165,13 @@ class Doc:
         self.foot_hint = hint
         self._newpage()
         c = self.c
-        c.setFillColor(GREEN); c.setFont("Mono-Bold", 8)
-        c.drawString(LM, self.y, f"SECTION {num}")
+        self._ychip(LM, self.y, f"SECTION {num}", "Mono-Bold", 8)
         self.y -= 8
         for ln in wrap(title, "Inter-Black", 27, CW, cs=-0.9):
             self.y -= 31
             trtext(c, LM, self.y, ln, "Inter-Black", 27, -0.9, BLACK)
         self.y -= 6
-        c.setFillColor(GREEN); c.rect(LM, self.y, 46, 5, fill=1, stroke=0)
+        self._ybar(LM, self.y, 46, 5)
         self.y -= 22; c.setFillColor(BLACK)
 
     def h3(self, text):
@@ -181,8 +195,7 @@ class Doc:
             for i, ln in enumerate(lines):
                 self.ensure(lead); self.y -= lead
                 if i == 0:
-                    self.c.setFillColor(GREEN)
-                    self.c.rect(LM + 1, self.y + 2.2, 5, 5, fill=1, stroke=0)
+                    self._ybar(LM + 1, self.y + 2.2, 5, 5)
                 self.c.setFillColor(INK); self.c.setFont("Inter", 10.5)
                 self.c.drawString(LM + 18, self.y, ln)
             self.y -= gap
@@ -193,8 +206,7 @@ class Doc:
             head = wrap(t, "Inter-Bold", 11, CW - 26, cs=-0.2)
             self.ensure(16 + len(head) * 15)
             self.y -= 16
-            self.c.setFillColor(GREEN); self.c.setFont("Inter-Black", 12)
-            self.c.drawString(LM, self.y, f"{idx:02d}")
+            self._ychip(LM, self.y, f"{idx:02d}", "Inter-Black", 12, padx=2.5)
             for i, ln in enumerate(head):
                 if i: self.y -= 14
                 trtext(self.c, LM + 26, self.y, ln, "Inter-Bold", 11, -0.2, BLACK)
@@ -212,9 +224,9 @@ class Doc:
         top = self.y; box_h = 18 + len(lines) * 16 + 14
         self.c.setFillColor(BLACK)
         self.c.rect(LM, top - box_h, CW, box_h, fill=1, stroke=0)
-        self.c.setFillColor(GREEN); self.c.rect(LM, top - box_h, 6, box_h, fill=1, stroke=0)
+        self.c.setFillColor(YELLOW); self.c.rect(LM, top - box_h, 6, box_h, fill=1, stroke=0)
         yy = top - 18
-        self.c.setFillColor(GREEN); self.c.setFont("Mono-Bold", 7.5)
+        self.c.setFillColor(YELLOW); self.c.setFont("Mono-Bold", 7.5)
         self.c.drawString(LM + 20, yy, label.upper()); yy -= 14
         for ln in lines:
             self.c.setFillColor(YELLOW); self.c.setFont("Inter-SB", 12)
@@ -224,7 +236,7 @@ class Doc:
     def quote(self, text):
         lines = wrap(text, "Inter-Black", 18, CW - 20, cs=-0.5)
         self.ensure(len(lines) * 24 + 24); self.y -= 14
-        self.c.setFillColor(GREEN); self.c.rect(LM, self.y - len(lines)*24 + 18, 6, len(lines)*24, fill=1, stroke=0)
+        self._ybar(LM, self.y - len(lines)*24 + 18, 6, len(lines)*24)
         for ln in lines:
             self.y -= 24
             trtext(self.c, LM + 20, self.y, ln, "Inter-Black", 18, -0.5, BLACK)
@@ -256,7 +268,7 @@ class Doc:
             self.y -= 6
             for j, (num, lab) in enumerate(row):
                 x = LM + j * col
-                self.c.setFillColor(GREEN); self.c.rect(x, self.y - 2, 22, 4, fill=1, stroke=0)
+                self._ybar(x, self.y - 2, 22, 4)
                 trtext(self.c, x, self.y - 30, num, "Inter-Black", 25, -1, BLACK)
                 ly = self.y - 44
                 for ln in wrap(lab, "Inter-Med", 8.4, col - 12):
@@ -272,7 +284,7 @@ class Doc:
         self.ensure(26); self.y -= 18
         self.c.setFont("Mono-Bold", 7.5); self.c.setFillColor(BLACK)
         self.c.drawString(xL, self.y, left_title.upper())
-        self.c.setFillColor(GREEN); self.c.drawString(xR, self.y, right_title.upper())
+        self._ychip(xR, self.y, right_title.upper(), "Mono-Bold", 7.5)
         self.c.setFillColor(BLACK); self.y -= 6
         self.c.setLineWidth(0.8); self.c.line(LM, self.y, PW - RM, self.y); self.y -= 4
         for label, was, now in rows:
@@ -281,8 +293,7 @@ class Doc:
             rh = 13 + max(len(wl), len(nl)) * 13 + 8
             self.ensure(rh)
             self.y -= 13
-            self.c.setFont("Mono-Bold", 6.6); self.c.setFillColor(GREEN)
-            self.c.drawString(xL, self.y, label.upper())
+            self._ychip(xL, self.y, label.upper(), "Mono-Bold", 6.6)
             self.c.setFillColor(BLACK)
             yy = self.y - 13
             for k in range(max(len(wl), len(nl))):
