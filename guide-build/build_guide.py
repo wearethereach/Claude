@@ -23,6 +23,7 @@ pdfmetrics.registerFont(TTFont("Mono-Bold",    f"{MB}/JetBrainsMono-Bold.ttf"))
 
 # ---------- palette ----------
 YELLOW = HexColor(0xFFF55F)
+WHITE  = HexColor(0xFFFFFF)
 BLACK  = HexColor(0x000000)
 INK    = HexColor(0x0A0A0A)
 GREEN  = HexColor(0x00A85A)   # iDeals-style green accent
@@ -76,7 +77,8 @@ class Doc:
     # ----- page furniture -----
     def _furniture(self, cover=False):
         c = self.c
-        c.setFillColor(YELLOW); c.rect(0, 0, PW, PH, fill=1, stroke=0)
+        bg = YELLOW if self.page == 1 else WHITE   # cover yellow, rest white
+        c.setFillColor(bg); c.rect(0, 0, PW, PH, fill=1, stroke=0)
         c.setFillColor(BLACK)
         # top running header
         c.setFont("Mono-Med", 6.4)
